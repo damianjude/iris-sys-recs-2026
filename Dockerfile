@@ -1,4 +1,4 @@
-FROM ruby:3.4.1-slim
+FROM ruby:3.4.8-slim
 
 ENV BUNDLE_PATH=/usr/local/bundle \
 		BUNDLE_WITHOUT=development:test
@@ -7,6 +7,8 @@ RUN apt-get update -qq \
 	&& apt-get install -y --no-install-recommends \
 		build-essential \
 		default-libmysqlclient-dev \
+		libyaml-dev \
+		pkg-config \
 		git \
 		curl \
 	&& rm -rf /var/lib/apt/lists/*
