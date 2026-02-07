@@ -106,8 +106,8 @@ services:
     image: nginx/nginx-prometheus-exporter:1.5.1
     expose:
       - 9113
-    environment:
-      NGINX_STATUS_URL: "http://nginx/nginx_status"
+    command:
+    - "--nginx.scrape-uri=http://nginx/nginx_status"
     depends_on:
       - nginx
 
