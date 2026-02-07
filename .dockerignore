@@ -19,7 +19,6 @@ secrets.yaml
 dist/
 build/
 out/
-bin/
 
 # Version control
 .git/
