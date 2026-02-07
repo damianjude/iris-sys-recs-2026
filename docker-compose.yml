@@ -107,7 +107,7 @@ services:
     expose:
       - 9113
     command:
-    - "--nginx.scrape-uri=http://nginx/nginx_status"
+      - "--nginx.scrape-uri=http://nginx/nginx_status"
     depends_on:
       - nginx
 
