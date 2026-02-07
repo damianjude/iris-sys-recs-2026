@@ -97,8 +97,11 @@ services:
     image: prom/mysqld-exporter:v0.18.0
     expose:
       - 9104
-    environment:
-      DATA_SOURCE_NAME: "root:${MYSQL_PASSWORD:-rails_password}@tcp(db:3306)/"
+    volumes:
+      - ./mysqld-exporter/my.cnf:/etc/mysqld_exporter/my.cnf:ro
+    command:
+      - "--config.my-cnf=/etc/mysqld_exporter/my.cnf"
+      - "--mysqld.address=db:3306"
     depends_on:
       - db
 
