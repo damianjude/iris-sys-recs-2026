@@ -137,6 +137,22 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
+  
+  backup:
+    build: ./backups
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      BACKUP_DIR: /backups
+      BACKUP_INTERVAL: 3600
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/backup:ro
+      - ./backups:/backups
 
 volumes:
   db_data:
