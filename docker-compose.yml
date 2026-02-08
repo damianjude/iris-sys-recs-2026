@@ -93,6 +93,19 @@ services:
       - web1
       - web2
 
+  node-exporter:
+    image: prom/node-exporter:v1.10.2
+    expose:
+      - 9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+
   mysqld-exporter:
     image: prom/mysqld-exporter:v0.18.0
     expose:
