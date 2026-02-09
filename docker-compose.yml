@@ -3,7 +3,9 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
-      MYSQL_DATABASE: iris_systems_rec_task_development
+      MYSQL_DATABASE: iris_systems_rec_task_production
+      MYSQL_USER: iris_systems_rec_task
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -13,52 +15,79 @@ services:
       retries: 10
 
   web:
-    build: .
+    build:
+      context: .
+      secrets:
+        - rails_master_key
     working_dir: /app
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
-      RAILS_ENV: development
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "1"
+      IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+    secrets:
+      - rails_master_key
     expose:
       - 3000
-    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
   
   web1:
-    build: .
+    build:
+      context: .
+      secrets:
+        - rails_master_key
     working_dir: /app
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
-      RAILS_ENV: development
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "1"
+      IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+    secrets:
+      - rails_master_key
     expose:
       - 3000
-    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
 
   web2:
-    build: .
+    build:
+      context: .
+      secrets:
+        - rails_master_key
     working_dir: /app
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
-      RAILS_ENV: development
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: "1"
+      IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+    secrets:
+      - rails_master_key
     expose:
       - 3000
-    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
   
   nginx:
     image: nginx:1.29.5-alpine-slim
@@ -154,6 +183,31 @@ services:
       - .:/backup:ro
       - ./backups:/backups
 
+  migrate:
+    build:
+      context: .
+      secrets:
+        - rails_master_key
+    working_dir: /app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+    secrets:
+      - rails_master_key
+    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails db:prepare"]
+    restart: "no"
+
 volumes:
   db_data:
   grafana_data:
+
+secrets:
+  rails_master_key:
+    file: ./config/master.key
