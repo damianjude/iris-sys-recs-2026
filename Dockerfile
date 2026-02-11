@@ -45,6 +45,8 @@ WORKDIR /app
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /app /app
 
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
+
 RUN groupadd --system rails && useradd --system --gid rails --create-home rails \
 	&& chown -R rails:rails /app
 
@@ -52,4 +54,5 @@ USER rails
 
 EXPOSE 3000
 
-CMD ["bash", "-lc", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0 -p 3000"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]

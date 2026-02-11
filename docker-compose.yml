@@ -37,7 +37,6 @@ services:
       - rails_master_key
     expose:
       - 3000
-    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
   
   web1:
     build:
@@ -62,7 +61,6 @@ services:
       - rails_master_key
     expose:
       - 3000
-    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
 
   web2:
     build:
@@ -87,7 +85,6 @@ services:
       - rails_master_key
     expose:
       - 3000
-    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails server -b 0.0.0.0 -p 3000"]
   
   nginx:
     image: nginx:1.29.5-alpine-slim
@@ -180,7 +177,6 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/backup:ro
       - ./backups:/backups
 
   migrate:
@@ -201,7 +197,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     secrets:
       - rails_master_key
-    command: ["sh", "-lc", "export RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) && bundle exec rails db:prepare"]
+    command: ["bundle", "exec", "rails", "db:prepare"]
     restart: "no"
 
 volumes:
