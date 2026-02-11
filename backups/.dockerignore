@@ -1,0 +1,5 @@
+# Exclude backup data and temp files from build context
+db/
+*.sql
+.tmp_*
+code/
