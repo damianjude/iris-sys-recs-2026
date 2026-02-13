@@ -31,7 +31,6 @@ services:
       IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     secrets:
       - rails_master_key
@@ -55,7 +54,6 @@ services:
       IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     secrets:
       - rails_master_key
@@ -79,7 +77,6 @@ services:
       IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     secrets:
       - rails_master_key
@@ -169,7 +166,6 @@ services:
     environment:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       BACKUP_DIR: /backups
       BACKUP_INTERVAL: 3600
@@ -193,7 +189,6 @@ services:
       IRIS_SYSTEMS_REC_TASK_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
     secrets:
       - rails_master_key
