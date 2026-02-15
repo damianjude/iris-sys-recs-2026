@@ -1,6 +1,6 @@
 FROM python:3.14.3-alpine3.23
 
-WORKDIR /backups
+WORKDIR /app
 
 COPY backup.py .
 
