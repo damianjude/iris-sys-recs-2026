@@ -106,6 +106,7 @@ services:
     expose:
       - 9090
     volumes:
+      - prometheus_data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
   
   cadvisor:
@@ -161,7 +162,6 @@ services:
     ports:
       - "3001:3000"
     volumes:
-      - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
@@ -203,8 +203,8 @@ services:
 
 volumes:
   db_data:
-  grafana_data:
   storage_data:
+  prometheus_data:
 
 secrets:
   rails_master_key:
