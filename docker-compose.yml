@@ -159,8 +159,6 @@ services:
 
   grafana:
     image: grafana/grafana:12.4.0-21693836646
-    ports:
-      - "3001:3000"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
