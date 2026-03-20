@@ -14,8 +14,15 @@ services:
     cap_add:
       - SYS_ADMIN
       - SETPCAP
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -ltn | grep -q ':2049'"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 5s
     networks:
       - app_net
+      - edge_net
 
   db:
     image: mysql:8.0
@@ -42,7 +49,7 @@ services:
     working_dir: /app
     depends_on:
       nfs:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
       migrate:
@@ -72,7 +79,7 @@ services:
     working_dir: /app
     depends_on:
       nfs:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
       migrate:
@@ -102,7 +109,7 @@ services:
     working_dir: /app
     depends_on:
       nfs:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
       migrate:
@@ -274,8 +281,9 @@ volumes:
     driver: local
     driver_opts:
       type: nfs
-      o: addr=127.0.0.1,nfsvers=4,rw,soft,timeo=180,tcp,port=2049
-      device: :/exports
+      # I've used host.docker.internal here because I use macOS (Docker Desktop). If you're on Linux (dockerd), you may need to replace this with 127.0.0.1.
+      o: addr=host.docker.internal,nfsvers=4,rw,soft,timeo=180,tcp,port=2049
+      device: :/
   db_data:
   prometheus_data:
   backup_data:
