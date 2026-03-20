@@ -37,6 +37,8 @@ RUN apt-get update -qq \
 	&& apt-get install -y --no-install-recommends \
 		libmariadb3 \
 		libyaml-0-2 \
+		nfs-common \
+		gosu \
 		curl \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -49,8 +51,6 @@ COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
 RUN groupadd --system rails && useradd --system --gid rails --create-home rails \
 	&& chown -R rails:rails /app
-
-USER rails
 
 EXPOSE 3000
 

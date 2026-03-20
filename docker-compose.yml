@@ -9,8 +9,6 @@ services:
       NFS_LOG_LEVEL: INFO
     volumes:
       - nfs_server_data:/exports
-    ports:
-      - "2049:2049"
     cap_add:
       - SYS_ADMIN
       - SETPCAP
@@ -22,7 +20,6 @@ services:
       start_period: 5s
     networks:
       - app_net
-      - edge_net
 
   db:
     image: mysql:8.0
@@ -61,10 +58,16 @@ services:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      ENABLE_ENTRYPOINT_NFS_MOUNT: "1"
+      NFS_SERVER: nfs
+      NFS_EXPORT_PATH: /
+      NFS_MOUNT_PATH: /app/storage
+      NFS_MOUNT_OPTS: rw,nfsvers=4,soft,timeo=180,tcp
     secrets:
       - rails_master_key
-    volumes:
-      - nfs_storage:/app/storage
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
     expose:
       - 3000
     networks:
@@ -91,10 +94,16 @@ services:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      ENABLE_ENTRYPOINT_NFS_MOUNT: "1"
+      NFS_SERVER: nfs
+      NFS_EXPORT_PATH: /
+      NFS_MOUNT_PATH: /app/storage
+      NFS_MOUNT_OPTS: rw,nfsvers=4,soft,timeo=180,tcp
     secrets:
       - rails_master_key
-    volumes:
-      - nfs_storage:/app/storage
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
     expose:
       - 3000
     networks:
@@ -121,10 +130,16 @@ services:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      ENABLE_ENTRYPOINT_NFS_MOUNT: "1"
+      NFS_SERVER: nfs
+      NFS_EXPORT_PATH: /
+      NFS_MOUNT_PATH: /app/storage
+      NFS_MOUNT_OPTS: rw,nfsvers=4,soft,timeo=180,tcp
     secrets:
       - rails_master_key
-    volumes:
-      - nfs_storage:/app/storage
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
     expose:
       - 3000
     networks:
@@ -268,6 +283,7 @@ services:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rails_password}
+      ENABLE_ENTRYPOINT_NFS_MOUNT: "0"
     secrets:
       - rails_master_key
     command: ["bundle", "exec", "rails", "db:prepare"]
@@ -277,13 +293,6 @@ services:
 
 volumes:
   nfs_server_data:
-  nfs_storage:
-    driver: local
-    driver_opts:
-      type: nfs
-      # I've used host.docker.internal here because I use macOS (Docker Desktop). If you're on Linux (dockerd), you may need to replace this with 127.0.0.1.
-      o: addr=host.docker.internal,nfsvers=4,rw,soft,timeo=180,tcp,port=2049
-      device: :/
   db_data:
   prometheus_data:
   backup_data:
