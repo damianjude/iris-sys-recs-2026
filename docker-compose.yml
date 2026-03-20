@@ -9,6 +9,8 @@ services:
       NFS_LOG_LEVEL: INFO
     volumes:
       - nfs_server_data:/exports
+    ports:
+      - "2049:2049"
     cap_add:
       - SYS_ADMIN
       - SETPCAP
@@ -39,6 +41,8 @@ services:
         - rails_master_key
     working_dir: /app
     depends_on:
+      nfs:
+        condition: service_started
       db:
         condition: service_healthy
       migrate:
@@ -53,7 +57,7 @@ services:
     secrets:
       - rails_master_key
     volumes:
-      - storage_data:/app/storage
+      - nfs_storage:/app/storage
     expose:
       - 3000
     networks:
@@ -67,6 +71,8 @@ services:
         - rails_master_key
     working_dir: /app
     depends_on:
+      nfs:
+        condition: service_started
       db:
         condition: service_healthy
       migrate:
@@ -81,7 +87,7 @@ services:
     secrets:
       - rails_master_key
     volumes:
-      - storage_data:/app/storage
+      - nfs_storage:/app/storage
     expose:
       - 3000
     networks:
@@ -95,6 +101,8 @@ services:
         - rails_master_key
     working_dir: /app
     depends_on:
+      nfs:
+        condition: service_started
       db:
         condition: service_healthy
       migrate:
@@ -109,7 +117,7 @@ services:
     secrets:
       - rails_master_key
     volumes:
-      - storage_data:/app/storage
+      - nfs_storage:/app/storage
     expose:
       - 3000
     networks:
@@ -262,8 +270,13 @@ services:
 
 volumes:
   nfs_server_data:
+  nfs_storage:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=127.0.0.1,nfsvers=4,rw,soft,timeo=180,tcp,port=2049
+      device: :/exports
   db_data:
-  storage_data:
   prometheus_data:
   backup_data:
 
