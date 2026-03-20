@@ -1,4 +1,20 @@
 services:
+  nfs:
+    image: erichough/nfs-server:2.2.1
+    platform: linux/amd64
+    privileged: true
+    environment:
+      NFS_EXPORT_0: /exports *(rw,sync,no_subtree_check,no_root_squash,insecure,fsid=0)
+      NFS_DISABLE_VERSION_3: "1"
+      NFS_LOG_LEVEL: INFO
+    volumes:
+      - nfs_server_data:/exports
+    cap_add:
+      - SYS_ADMIN
+      - SETPCAP
+    networks:
+      - app_net
+
   db:
     image: mysql:8.0
     environment:
@@ -245,6 +261,7 @@ services:
       - db_net
 
 volumes:
+  nfs_server_data:
   db_data:
   storage_data:
   prometheus_data:
