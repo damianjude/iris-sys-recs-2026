@@ -2,6 +2,11 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
+  - job_name: rails-app
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["web:3000", "web1:3000", "web2:3000"]
+
   - job_name: cadvisor
     static_configs:
       - targets: ["cadvisor:8080"]
