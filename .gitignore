@@ -255,3 +255,4 @@ __marimo__/
 # Backups
 backups/code
 backups/db
+backups/nfs

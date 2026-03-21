@@ -262,13 +262,15 @@ services:
       BACKUP_DIR: /backups
       BACKUP_INTERVAL: 3600
       CODE_SOURCE_DIR: /code
-      RETENTION_DAYS: 30
+      NFS_SOURCE_DIR: /nfs
+      RETENTION_COUNT: 5
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - backup_data:/backups
+      - ./backups:/backups
       - .:/code:ro
+      - nfs_server_data:/nfs:ro
     networks:
       - db_net
 
@@ -299,7 +301,6 @@ volumes:
   nfs_server_data:
   db_data:
   prometheus_data:
-  backup_data:
 
 networks:
   edge_net:
