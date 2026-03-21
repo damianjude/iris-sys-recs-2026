@@ -57,6 +57,8 @@ This project has implemented all tasks specified, including the bonus tasks:
 - Observability: `prometheus`, `grafana`, `loki`, `promtail`, `cadvisor`, `node-exporter`, `mysqld-exporter`, `nginx-prometheus-exporter`
 - `backup`: Python daemon that snapshots DB, code, and NFS
 
+![iris_stack_architecture](iris_stack_architecture.svg)
+
 ## Implementation details
 
 ### Dockerfile
@@ -125,8 +127,10 @@ A python backup script acting as a daemon periodically creates backups of the My
 
 A GitHub Actions workflow is set up to publish the app's docker image to Docker Hub at `vidowal449/iris-sys-recs-2026`, whenever a new release is created. It also caches the Docker layers to speed up the build process for subsequent releases.
 
-## Issues faced (but resolved)
+## Issues faced (but resolved) and design decisions
 
-One of the challenges I faced was ensuring that the NFS volume was properly mounted and shared across all web replicas. Initially, I tried to mount the NFS volume directly in the `docker-compose.yml` file, but this approach did not work as it entered a race condition. This was due to Docker mounting the NFS volume before the NFS server container was fully up and running. It is also not possible (AFAIK) to have the NFS volume be healthy before mounting it. I had originally thought of making it such that the launch command would include a delay in it (such as, `... && sleep 10 && ...`) to give the NFS server time to start, but this felt hacky and unreliable. Instead, I moved the NFS mount logic into the `docker-entrypoint.sh` script of the web containers. This way, the web containers will attempt to mount the NFS volume at startup, and if the NFS server is not ready yet, it will simply fail to mount and retry on the next container restart. This approach proved to be more robust and reliable, ensuring that the NFS volume is properly mounted and shared across all web replicas. 
+One of the challenges I faced was ensuring that the NFS volume was properly mounted and shared across all web replicas. Initially, I tried to mount the NFS volume directly in the `docker-compose.yml` file, but this approach did not work as it entered a race condition. This was due to Docker mounting the NFS volume before the NFS server container was fully up and running. It is also not possible (AFAIK) to have the NFS volume be healthy before mounting it. I had originally thought of making it such that the launch command would include a delay in it (such as, `... && sleep 10 && ...`) to give the NFS server time to start, but this felt hacky and unreliable. Instead, I moved the NFS mount logic into the `docker-entrypoint.sh` script of the web containers. This way, the web containers will attempt to mount the NFS volume at startup, and if the NFS server is not ready yet, it will simply fail to mount and retry on the next container restart. This approach proved to be more robust and reliable, ensuring that the NFS volume is properly mounted and shared across all web replicas.
 
 Another one was removing fixing an issue early on with volumes not mounting as Docker couldn't find it because of platform differences (Linux vs Mac). I had to ensure that it was `host.docker.internal` and not `127.0.0.1`, Although, I have moved to to an entrypoint script as mentioned above.
+
+I have also not exposed Prometheus UI externally as it is redundant given that Grafana can be used to query Prometheus metrics. Exposing Prometheus UI externally could potentially allow unauthorised users to access sensitive metrics data.
