@@ -73,6 +73,7 @@ services:
     networks:
       - app_net
       - db_net
+      - metrics_net
   
   web1:
     build:
@@ -109,6 +110,7 @@ services:
     networks:
       - app_net
       - db_net
+      - metrics_net
 
   web2:
     build:
@@ -145,6 +147,7 @@ services:
     networks:
       - app_net
       - db_net
+      - metrics_net
   
   nginx:
     image: nginx:1.29.5-alpine-slim
@@ -212,11 +215,8 @@ services:
     image: prom/mysqld-exporter:v0.18.0
     expose:
       - 9104
-    volumes:
-      - ./mysqld-exporter/my.cnf:/etc/mysqld_exporter/my.cnf:ro
-    command:
-      - "--config.my-cnf=/etc/mysqld_exporter/my.cnf"
-      - "--mysqld.address=db:3306"
+    environment:
+      DATA_SOURCE_NAME: "root:${MYSQL_PASSWORD:-rails_password}@(db:3306)/"
     depends_on:
       - db
     networks:
