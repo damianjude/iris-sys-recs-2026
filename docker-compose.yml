@@ -179,6 +179,28 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - metrics_net
+
+  loki:
+    image: grafana/loki:3.6.7
+    command: ["-config.file=/etc/loki/config.yml"]
+    expose:
+      - 3100
+    volumes:
+      - loki_data:/loki
+      - ./loki/config.yml:/etc/loki/config.yml:ro
+    networks:
+      - metrics_net
+
+  promtail:
+    image: grafana/promtail:3.6.7
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+    networks:
+      - metrics_net
   
   cadvisor:
     image: ghcr.io/google/cadvisor:0.56.2
@@ -301,6 +323,7 @@ volumes:
   nfs_server_data:
   db_data:
   prometheus_data:
+  loki_data:
 
 networks:
   edge_net:
