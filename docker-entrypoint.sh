@@ -36,7 +36,8 @@ fi
 # Clean up stale PID files
 rm -f tmp/pids/server.pid
 
+# Change ownership to rails user for proper permissions after NFS mount
 chown -R rails:rails /app/tmp /app/log /app/storage
 
-# Run app as non-root and PID 1 after NFS mount and setup
+# Run app as non-root and PID 1 using gosu to step down from su
 exec gosu rails "$@"
