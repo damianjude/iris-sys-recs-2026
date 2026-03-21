@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 2656977850425344,
+  "id": 4235950377148416,
   "links": [],
   "panels": [
     {
@@ -2551,6 +2551,6 @@
   "timezone": "browser",
   "title": "Docker and system monitoring",
   "uid": "9b9f8629-5df7-4372-9ce5-cea891bbbaa6",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }
