@@ -186,6 +186,8 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.9.0)
+    prometheus-client (4.2.5)
+      base64
     psych (5.3.1)
       date
       stringio
@@ -316,6 +318,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   mysql2 (~> 0.5)
+  prometheus-client (~> 4.2)
   puma (>= 5.0)
   rails (~> 7.2.3)
   sassc-rails
@@ -327,7 +330,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 3.4.8p72
+   ruby 3.4.9p82
 
 BUNDLED WITH
    2.6.9

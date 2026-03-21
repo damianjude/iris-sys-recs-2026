@@ -1,4 +1,4 @@
-FROM ruby:3.4.8-slim AS build
+FROM ruby:3.4.9-slim AS build
 
 ENV BUNDLE_PATH=/usr/local/bundle \
 		BUNDLE_WITHOUT=development:test \
@@ -27,7 +27,7 @@ COPY . .
 RUN --mount=type=secret,id=rails_master_key \
 	/bin/sh -c "RAILS_MASTER_KEY=$(cat /run/secrets/rails_master_key) bundle exec rails assets:precompile"
 
-FROM ruby:3.4.8-slim
+FROM ruby:3.4.9-slim
 
 ENV BUNDLE_PATH=/usr/local/bundle \
 		BUNDLE_WITHOUT=development:test \
